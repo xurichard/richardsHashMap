@@ -111,17 +111,97 @@ class richardsHashMapTests(unittest.TestCase):
 
 
 	def testDelete(self):
-		# tests get method for some set
+		# tests delete method for basic functionality
 		testHashMap = richardsHashMap(16)
 		testHashMap.set('key', 'value')
 		self.failUnless(testHashMap.get('key') == 'value')
 		self.failUnless(testHashMap.getNumEntries() == 1)
 
-		print testHashMap.delete('key')
+		delete_value = testHashMap.delete('key')
 		self.failIf(testHashMap.get('key') == 'value')
-		self.failUnless(testHashMap.get('key'))
-		self.failUnless(testHashMap.getNumEntries() == 1)
+		self.failIf(testHashMap.get('key'))
+		self.failUnless(testHashMap.getNumEntries() == 0)
+		self.failUnless(delete_value == 'value')
 
+	def testDelete2(self):
+		# test delete method in hashmap of multiple entries
+		testHashMap2 = richardsHashMap(16)
+		testHashMap2.set('k1', 'v1')
+		testHashMap2.set('k2', 'v2')
+		testHashMap2.set('k3', 'v3')
+		testHashMap2.set('k4', 'v4')
+
+		delete_value = testHashMap2.delete('k3')
+		self.failIf(testHashMap2.get('k3') == 'v3')
+		self.failIf(testHashMap2.get('k3'))
+		self.failUnless(testHashMap2.getNumEntries() == 3)
+		self.failUnless(delete_value == 'v3')
+
+	def testDelete3(self):
+		# test delete method on key that doesn't exist (should return None)
+		testHashMap3 = richardsHashMap(16)
+		delete_value = testHashMap3.delete('key')
+		self.failIf(testHashMap3.get('key'))
+		self.failUnless(testHashMap3.getNumEntries() == 0)
+		self.failIf(delete_value)
+
+	def testLoad(self):
+		# test load method for basic functionality
+		testHashMap = richardsHashMap(16)
+		testHashMap.set('k1', 'v1')
+		self.failUnless(testHashMap.load() == 0.0625)
+		testHashMap.set('k2', 'v2')
+		self.failUnless(testHashMap.load() == 0.125)
+		testHashMap.set('k3', 'v3')
+		self.failUnless(testHashMap.load() == 0.1875)
+		testHashMap.set('k4', 'v4')
+		self.failUnless(testHashMap.load() == 0.25)
+		testHashMap.set('k5', 'v5')
+		self.failUnless(testHashMap.load() == 0.3125)
+		testHashMap.set('k6', 'v6')
+		self.failUnless(testHashMap.load() == 0.375)
+		testHashMap.set('k7', 'v7')
+		self.failUnless(testHashMap.load() == 0.4375)
+		testHashMap.set('k8', 'v8')
+		self.failUnless(testHashMap.load() == 0.5)
+		testHashMap.set('k9', 'v9')
+		self.failUnless(testHashMap.load() == 0.5625)
+
+	def testLoad2(self):
+		# test load method for replacing value for an existing key-value pair
+		testHashMap2 = richardsHashMap(5)
+		testHashMap2.set('k1', 'v1')
+		self.failUnless(testHashMap2.load() == 0.2)
+		testHashMap2.set('k1', 'v2')
+		self.failUnless(testHashMap2.load() == 0.2)
+
+
+	def testLoad3(self):
+		# test load method for when rehashing occurs
+		# tests set method for rehashing functionality
+		testHashMap3 = richardsHashMap(2)
+		testHashMap3.set('k1', 'v1')
+		self.failUnless(testHashMap3.load() == 0.5)
+
+		testHashMap3.set('k2', 'v2')
+		# should rehash here
+		self.failUnless(testHashMap3.load() == 0.5)
+
+		# now testHashMap3 has a size of 4, num_entries = 2
+		testHashMap3.set('k3', 'v3')
+
+		# should rehash here
+		self.failUnless(testHashMap3.load() == 0.375)
+
+		# now testHashMap3 has a size of 8, num_entries = 3
+		testHashMap3.set('k4', 'v4')
+		self.failUnless(testHashMap3.load() == 0.5)
+		testHashMap3.set('k5', 'v5')
+		self.failUnless(testHashMap3.load() == 0.625)
+		testHashMap3.set('k6', 'v6')
+		# should rehash here
+		self.failUnless(testHashMap3.load() == 0.375)
+		# now testHashMap3 has a size of 16, num_entries = 6
 
 
 def main():

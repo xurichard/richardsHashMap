@@ -87,6 +87,7 @@ class richardsHashMap(object):
 		while entry:
 			if entry.getKey() == key: # we have to remove this entry
 				delete_value = entry.getValue()
+				self.num_entries -= 1
 				if previous_entry: # we have more than one entry in the bucket
 					previous_entry.setNext(entry.getNext())
 				else: # we only have one entry in the bucket, so remove it
